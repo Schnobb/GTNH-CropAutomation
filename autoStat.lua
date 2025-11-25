@@ -56,8 +56,6 @@ local function updateLowest()
             end
         end
     end
-
-    print('autoStat: Lowest stats: ' .. cropStatsToString(lowestCropStats))
 end
 
 
@@ -175,6 +173,7 @@ local function main()
     statOnce(true)
     action.restockAll()
     updateLowest()
+    print('autoStat: Lowest stats: ' .. cropStatsToString(lowestCropStats))
 
     -- Loop
     while statOnce(false) do
