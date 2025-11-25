@@ -27,7 +27,7 @@ local function computeCropStats(cropStats)
 end
 
 local function cropStatsToString(cropStats)
-    return (cropStats.name or "N/A") .. " - Gr: " .. cropStats.growth .. ", Ga: " .. cropStats.gains .. ", Re: " .. cropStats.resistance
+    return cropStats.name .. " - Gr: " .. cropStats.growth .. ", Ga: " .. cropStats.gains .. ", Re: " .. cropStats.resistance
 end
 
 local function updateLowest()
