@@ -15,6 +15,11 @@ local function updateLowest()
     lowestStat = 99
     lowestStatSlot = 0
 
+    local lowestName = 'N/A'
+    local lowestGr = 0
+    local lowestGa = 0
+    local lowestRe = 0
+
     -- Find lowest stat slot
     for slot=1, config.workingFarmArea, 2 do
         local crop = farm[slot]
@@ -24,23 +29,36 @@ local function updateLowest()
                 lowestStat = 0
                 lowestStatSlot = slot
                 break
+            end
 
-            elseif crop.name ~= targetCrop then
+            if crop.name ~= targetCrop then
                 local stat = crop.gr + crop.ga - crop.re - 2
                 if stat < lowestStat then
                     lowestStat = stat
                     lowestStatSlot = slot
-                end
 
+                    lowestName = crop.name
+                    lowestGr = crop.gr
+                    lowestGa = crop.ga
+                    lowestRe = crop.re
+                end
             else
                 local stat = crop.gr + crop.ga - crop.re
                 if stat < lowestStat then
                     lowestStat = stat
                     lowestStatSlot = slot
+
+                    lowestName = crop.name
+                    lowestGr = crop.gr
+                    lowestGa = crop.ga
+                    lowestRe = crop.re
                 end
             end
         end
     end
+
+    local statsString = lowestName .. ' - Gr: ' .. lowestGr .. ', Ga: ' .. lowestGa .. ', Re: ' .. lowestRe
+    print('autoStat: ' .. statsString)
 end
 
 
