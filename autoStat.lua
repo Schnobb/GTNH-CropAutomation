@@ -10,7 +10,7 @@ local targetCrop
 
 local function CropStats(name, growth, gains, resistance, slotIndex)
     return {
-        name = name or '',
+        name = name or "",
         growth = growth or 0,
         gains = gains or 0,
         resistance = resistance or 0,
@@ -27,11 +27,7 @@ local function computeCropStats(cropStats)
 end
 
 local function cropStatsToString(cropStats)
-    local name = cropStats.name
-    if name == '' then
-        name = 'N/A'
-    end
-    return cropStats.name .. ' - Gr: ' .. cropStats.growth .. ', Ga: ' .. cropStats.gains .. ', Re: ' .. cropStats.resistance
+    return (cropStats.name or "N/A") .. " - Gr: " .. cropStats.growth .. ", Ga: " .. cropStats.gains .. ", Re: " .. cropStats.resistance
 end
 
 local function updateLowest()
