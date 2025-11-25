@@ -4,39 +4,54 @@ local gps = require('gps')
 local scanner = require('scanner')
 local config = require('config')
 local events = require('events')
-local lowestStat = 0
-local lowestStatSlot = 0
 local targetCrop
+
+-- ====================== CLASSES =======================
+
+local function CropStats(name, growth, gains, resistance, slotIndex)
+    return {
+        name = name or "",
+        growth = growth or 0,
+        gains = gains or 0,
+        resistance = resistance or 0,
+        slotIndex = slotIndex or 0,
+    }
+end
+
+local lowestCropStats = CropStats()
 
 -- ===================== FUNCTIONS ======================
 
+local function computeCropStats(cropStats)
+    return cropStats.growth + cropStats.gains - cropStats.resistance
+end
+
+local function cropStatsToString(cropStats)
+    return cropStats.name .. " - Gr: " .. cropStats.growth .. ", Ga: " .. cropStats.gains .. ", Re: " .. cropStats.resistance
+end
+
 local function updateLowest()
     local farm = database.getFarm()
-    lowestStat = 99
-    lowestStatSlot = 0
-
     -- Find lowest stat slot
     for slot=1, config.workingFarmArea, 2 do
         local crop = farm[slot]
         if crop.isCrop then
-
             if crop.name == 'air' or crop.name == 'emptyCrop' then
-                lowestStat = 0
-                lowestStatSlot = slot
+                lowestCropStats = CropStats(crop.name, 0, 0, 0, slot)
                 break
+            end
 
-            elseif crop.name ~= targetCrop then
-                local stat = crop.gr + crop.ga - crop.re - 2
-                if stat < lowestStat then
-                    lowestStat = stat
-                    lowestStatSlot = slot
+            local tempCropStats = CropStats(crop.name, crop.gr, crop.ga, crop.re, slot)
+            local stat = computeCropStats(tempCropStats)
+            local lowestStat = computeCropStats(lowestCropStats)
+            
+            if crop.name ~= targetCrop then
+                if (stat - 2) < lowestStat then
+                    lowestCropStats = tempCropStats
                 end
-
             else
-                local stat = crop.gr + crop.ga - crop.re
                 if stat < lowestStat then
-                    lowestStat = stat
-                    lowestStatSlot = slot
+                    lowestCropStats = tempCropStats
                 end
             end
         end
@@ -59,6 +74,8 @@ local function checkChild(slot, crop, firstRun)
 
         elseif crop.name == targetCrop then
             local stat = crop.gr + crop.ga - crop.re
+            local lowestStat = computeCropStats(lowestCropStats)
+            local lowestStatSlot = lowestCropStats.slotIndex
 
             if stat > lowestStat then
                 action.transplant(gps.workingSlotToPos(slot), gps.workingSlotToPos(lowestStatSlot))
@@ -108,7 +125,7 @@ local function statOnce(firstRun)
         end
 
         -- Terminal Condition
-        if lowestStat >= config.autoStatThreshold then
+        if computeCropStats(lowestCropStats) >= config.autoStatThreshold then
             print('autoStat: Minimum Stat Threshold Reached!')
             return false
         end
@@ -156,6 +173,7 @@ local function main()
     statOnce(true)
     action.restockAll()
     updateLowest()
+    print('autoStat: Lowest stats: ' .. cropStatsToString(lowestCropStats))
 
     -- Loop
     while statOnce(false) do
