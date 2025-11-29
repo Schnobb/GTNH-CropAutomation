@@ -2,6 +2,8 @@
 
 Simply added logging to the autoStat module. After each round the robot will log its lowest crop stats. This gives you a way to track progress a bit more without checking all your crops manually.
 
+Also changed some configs so I can sync my robots quickly without fiddling around in game.
+
 # Introduction
 
 These OpenComputers (OC) scripts automatically tier-up, stat-up, and spread (duplicate) IC2 crops for you. This guide walks through every step of the process, from building the crop bot to debugging and troubleshooting. No prior knowledege of OC is necessary.
