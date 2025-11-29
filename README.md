@@ -1,4 +1,4 @@
-# Changes from base repo
+# Changes From Base Repo
 
 Simply added logging to the autoStat module. After each round the robot will log its lowest crop stats. This gives you a way to track progress a bit more without checking all your crops manually.
 
